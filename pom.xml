@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.fusesource</groupId>
     <artifactId>fusesource-pom</artifactId>
-    <version>1.3</version>
+    <version>1.9</version>
   </parent>
 
   <groupId>org.fusesource.scalamd</groupId>
@@ -35,11 +35,11 @@
 
   <properties>
     <forge-project-id>scalamd</forge-project-id>
-    <release-altGitURL>scm:git:ssh://git@github.com:chirino/scalamd.git</release-altGitURL>
     
-    <scala-version>2.8.1</scala-version>
+    <scala-version>2.9.0</scala-version>
     <maven-scala-plugin-version>2.15.0</maven-scala-plugin-version>
     <maven-surefire-plugin-version>2.4.3</maven-surefire-plugin-version>
+
     <bundle-plugin-version>2.3.4</bundle-plugin-version>
     
   </properties>
@@ -90,10 +90,9 @@
 
   <url>http://${forge-project-id}.fusesource.com/maven/${project.version}</url>
   <scm>
-    <connection>scm:git:git://github.com/chirino/scalamd.git</connection>
-    <!-- Work around for issue: http://jira.codehaus.org/browse/SCM-444 -->
-    <developerConnection>${release-altGitURL}</developerConnection>
-    <url>http://github.com/chirino/scalamd/tree/master</url>
+    <connection>scm:git:git://github.com/fusesource/scalamd.git</connection>
+    <developerConnection>scm:git:git@github.com:fusesource/scalamd.git</developerConnection>
+    <url>https://github.com/fusesource/scalamd/blob/master</url>
   </scm>
   <distributionManagement>
     <site>
