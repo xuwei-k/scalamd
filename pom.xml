@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.fusesource</groupId>
     <artifactId>fusesource-pom</artifactId>
-    <version>1.3</version>
+    <version>1.9</version>
   </parent>
 
   <groupId>org.fusesource.scalamd</groupId>
@@ -35,8 +35,6 @@
 
   <properties>
     <forge-project-id>scalamd</forge-project-id>
-    <release-altGitURL>scm:git:ssh://git@github.com:chirino/scalamd.git</release-altGitURL>
-    
     <scala-version>2.10.0</scala-version>
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
     <maven-surefire-plugin-version>2.12.4</maven-surefire-plugin-version>
@@ -90,10 +88,9 @@
 
   <url>http://${forge-project-id}.fusesource.com/maven/${project.version}</url>
   <scm>
-    <connection>scm:git:git://github.com/chirino/scalamd.git</connection>
-    <!-- Work around for issue: http://jira.codehaus.org/browse/SCM-444 -->
-    <developerConnection>${release-altGitURL}</developerConnection>
-    <url>http://github.com/chirino/scalamd/tree/master</url>
+    <connection>scm:git:git://github.com/fusesource/scalamd.git</connection>
+    <developerConnection>scm:git:git@github.com:fusesource/scalamd.git</developerConnection>
+    <url>https://github.com/fusesource/scalamd/blob/master</url>
   </scm>
   <distributionManagement>
     <site>
@@ -201,9 +198,9 @@
         <plugins>
           <!-- Generate the Scala Docs so that they can be included in the javadoc artifact -->
           <plugin>
-            <groupId>org.scala-tools</groupId>
-            <artifactId>maven-scala-plugin</artifactId>
-            <version>${maven-scala-plugin-version}</version>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
+            <version>${scala-maven-plugin-version}</version>
             <executions>
               <execution>
                 <id>doc</id>
