@@ -24,7 +24,7 @@
   </parent>
 
   <groupId>org.fusesource.scalamd</groupId>
-  <artifactId>scalamd_2.10</artifactId>
+  <artifactId>scalamd_2.11</artifactId>
   <version>1.6</version>
   <packaging>bundle</packaging>
   
@@ -35,7 +35,7 @@
 
   <properties>
     <forge-project-id>scalamd</forge-project-id>
-    <scala-version>2.10.0</scala-version>
+    <scala-version>2.11.0</scala-version>
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
     <maven-surefire-plugin-version>2.12.4</maven-surefire-plugin-version>
     <bundle-plugin-version>2.3.4</bundle-plugin-version>
@@ -79,8 +79,8 @@
     </dependency>
     <dependency>
       <groupId>org.specs2</groupId>
-      <artifactId>specs2_2.10</artifactId>
-      <version>1.13</version>
+      <artifactId>specs2_2.11</artifactId>
+      <version>2.3.11</version>
       <scope>test</scope>
     </dependency>
     
