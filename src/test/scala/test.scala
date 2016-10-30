@@ -19,14 +19,15 @@ class MarkdownSpec extends Specification {
       val textFile = new File(this.getClass.getResource("/" + name + ".text").toURI)
       val htmlFile = new File(this.getClass.getResource("/" + name + ".html").toURI)
       val text = Markdown(FileUtils.readFileToString(textFile, "UTF-8")).trim
-//      println("[%s]".format(text))
       val html = FileUtils.readFileToString(htmlFile, "UTF-8").trim
       val diffIndex = StringUtils.indexOfDifference(text, html)
       val diff = StringUtils.difference(text, html)
-      result(diffIndex == -1,
-          "\"" + name + "\" is fine",
-          "\"" + name + "\" fails at " + diffIndex + ": " + StringUtils.abbreviate(diff, 32),
-          s)
+      result(
+        diffIndex == -1,
+        "\"" + name + "\" is fine",
+        "\"" + name + "\" fails at " + diffIndex + ": " + StringUtils.abbreviate(diff, 32),
+        s
+      )
     }
   }
 

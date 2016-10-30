@@ -9,6 +9,8 @@ import java.util.Random
 import java.lang.StringBuilder
 import collection.mutable.ListBuffer
 
+import scala.language.existentials
+
 // # The Markdown Processor
 
 /**
@@ -26,7 +28,7 @@ object Markdown {
   val leftQuote = "&ldquo;"
   val rightQuote = "&rdquo;"
   val dash = "&mdash;"
-  val copy ="&copy;"
+  val copy = "&copy;"
   val reg = "&reg;"
   val trademark = "&trade;"
   val ellipsis = "&hellip;"
@@ -39,11 +41,11 @@ object Markdown {
   val chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
   val rnd = new Random
   val blockTags = "p" :: "div" :: "h1" :: "h2" :: "h3" :: "h4" :: "h5" :: "h6" ::
-      "blockquote" :: "pre" :: "table" :: "dl" :: "ol" :: "ul" :: "script" ::
-      "noscript" :: "form" :: "fieldset" :: "iframe" :: "math" :: "ins" :: "del" ::
-      "article" :: "aside" :: "footer" :: "header" :: "hgroup" :: "nav" :: "section" ::
-      "figure" :: "video" :: "audio" :: "embed" :: "canvas" :: "address" :: "details" ::
-      "object" ::  Nil
+    "blockquote" :: "pre" :: "table" :: "dl" :: "ol" :: "ul" :: "script" ::
+    "noscript" :: "form" :: "fieldset" :: "iframe" :: "math" :: "ins" :: "del" ::
+    "article" :: "aside" :: "footer" :: "header" :: "hgroup" :: "nav" :: "section" ::
+    "figure" :: "video" :: "audio" :: "embed" :: "canvas" :: "address" :: "details" ::
+    "object" :: Nil
   val htmlNameTokenExpr = "[a-z_:][a-z0-9\\-_:.]*"
 
   // ## Regex patterns
@@ -62,52 +64,62 @@ object Markdown {
   // Trailing whitespace
   val rTrailingWS = Pattern.compile("\\s+$")
   // Start of inline HTML block
-  val rInlineHtmlStart = Pattern.compile("^<(" + blockTags.mkString("|") + ")\\b[^/>]*?>",
-    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE)
+  val rInlineHtmlStart = Pattern.compile(
+    "^<(" + blockTags.mkString("|") + ")\\b[^/>]*?>",
+    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE
+  )
   // HTML comments
-  val rHtmlComment = Pattern.compile("^ {0,3}(<!--.*?-->)\\s*?(?=\\n+|\\Z)",
-    Pattern.MULTILINE | Pattern.DOTALL)
+  val rHtmlComment = Pattern.compile(
+    "^ {0,3}(<!--.*?-->)\\s*?(?=\\n+|\\Z)",
+    Pattern.MULTILINE | Pattern.DOTALL
+  )
   // Link definitions
   val rLinkDefinition = Pattern.compile("^ {0,3}\\[(.+)\\]:" +
-      " *\\n? *<?(\\S+)>? *\\n? *" +
-      "(?:[\"('](.+?)[\")'])?" +
-      "(?=\\n+|\\Z)", Pattern.MULTILINE)
+    " *\\n? *<?(\\S+)>? *\\n? *" +
+    "(?:[\"('](.+?)[\")'])?" +
+    "(?=\\n+|\\Z)", Pattern.MULTILINE)
   // Character escaping
   val rEscAmp = Pattern.compile("&(?!#?[xX]?(?:[0-9a-fA-F]+|\\w+);)")
   val rEscLt = Pattern.compile("<(?![a-z/?\\$!])")
   val rInsideTags = Pattern.compile("<(/?" + htmlNameTokenExpr + "(?:\\s+(?:" +
-      "(?:" + htmlNameTokenExpr + "\\s*=\\s*\"[^\"]*\")|" +
-      "(?:" + htmlNameTokenExpr + "\\s*=\\s*'[^']*')|" +
-      "(?:" + htmlNameTokenExpr + "\\s*=\\s*[a-z0-9_:.\\-]+)" +
-      ")\\s*)*)/?>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE)
+    "(?:" + htmlNameTokenExpr + "\\s*=\\s*\"[^\"]*\")|" +
+    "(?:" + htmlNameTokenExpr + "\\s*=\\s*'[^']*')|" +
+    "(?:" + htmlNameTokenExpr + "\\s*=\\s*[a-z0-9_:.\\-]+)" +
+    ")\\s*)*)/?>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE)
   // Headers
   val rH1 = Pattern.compile("^ {0,3}(\\S.*?)( *\\{#(.*?)\\})?\\n=+(?=\\n+|\\Z)", Pattern.MULTILINE)
   val rH2 = Pattern.compile("^ {0,3}(\\S.*?)( *\\{#(.*?)\\})?\\n-+(?=\\n+|\\Z)", Pattern.MULTILINE)
   val rHeaders = Pattern.compile("^(#{1,6}) *(\\S.*?)(?: *#*)?( *\\{#(.*?)\\})?$", Pattern.MULTILINE)
   // Horizontal rulers
   val rHr = Pattern.compile("^ {0,3}(?:" +
-      "(?:(?:\\* *){3,})|" +
-      "(?:(?:- *){3,})|" +
-      "(?:(?:_ *){3,})" +
-      ") *$", Pattern.MULTILINE)
-  val rHtmlHr = Pattern.compile("^ {0,3}(<hr.*?>)\\s*?$",
-    Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE)
+    "(?:(?:\\* *){3,})|" +
+    "(?:(?:- *){3,})|" +
+    "(?:(?:_ *){3,})" +
+    ") *$", Pattern.MULTILINE)
+  val rHtmlHr = Pattern.compile(
+    "^ {0,3}(<hr.*?>)\\s*?$",
+    Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE
+  )
   // Lists
   val listExpr = "( {0,3}([-+*]|\\d+\\.) +(?s:.+?)" +
-      "(?:\\Z|\\n{2,}(?![-+*]|\\s|\\d+\\.)))"
+    "(?:\\Z|\\n{2,}(?![-+*]|\\s|\\d+\\.)))"
   val rSubList = Pattern.compile("^" + listExpr, Pattern.MULTILINE)
   val rList = Pattern.compile("(?<=\\n\\n|\\A\\n?)" + listExpr, Pattern.MULTILINE)
   val rListItem = Pattern.compile("(\\n)?^( *)(?:[-+*]|\\d+\\.) +" +
-      "((?s:.+?)\\n{1,2})(?=\\n*(?:\\Z|\\2(?:[-+*]|\\d+\\.) +))", Pattern.MULTILINE)
+    "((?s:.+?)\\n{1,2})(?=\\n*(?:\\Z|\\2(?:[-+*]|\\d+\\.) +))", Pattern.MULTILINE)
   // Code blocks
   val rCodeBlock = Pattern.compile("(?<=\\n\\n|\\A\\n?)" +
-      "(^ {4}(?s:.+?))(?=\\Z|\\n+ {0,3}\\S)", Pattern.MULTILINE)
+    "(^ {4}(?s:.+?))(?=\\Z|\\n+ {0,3}\\S)", Pattern.MULTILINE)
   val rCodeLangId = Pattern.compile("^\\s*lang:(.+?)(?:\\n|\\Z)")
   // Block quotes
-  val rBlockQuote = Pattern.compile("((?:^ *>(?:.+(?:\\n|\\Z))+\\n*)+)",
-    Pattern.MULTILINE)
-  val rBlockQuoteTrims = Pattern.compile("(?:^ *> ?)|(?:^ *$)|(?-m:\\n+$)",
-    Pattern.MULTILINE)
+  val rBlockQuote = Pattern.compile(
+    "((?:^ *>(?:.+(?:\\n|\\Z))+\\n*)+)",
+    Pattern.MULTILINE
+  )
+  val rBlockQuoteTrims = Pattern.compile(
+    "(?:^ *> ?)|(?:^ *$)|(?-m:\\n+$)",
+    Pattern.MULTILINE
+  )
   // Paragraphs splitter
   val rParaSplit = Pattern.compile("\\n{2,}")
   // Code spans
@@ -117,26 +129,26 @@ object Markdown {
   val rImage = Pattern.compile("!\\[(.*?)\\]\\((.*?)( \"(.*?)\")?\\)")
   // Backslash escapes
   val backslashEscapes = ("\\\\\\\\" -> "&#92;") ::
-      ("\\\\`" ->  "&#96;") ::
-      ("\\\\_" ->  "&#95;") ::
-      ("\\\\>" ->  "&gt;") ::
-      ("\\\\\\*" ->  "&#42;") ::
-      ("\\\\\\{" ->  "&#123;") ::
-      ("\\\\\\}" ->  "&#125;") ::
-      ("\\\\\\[" ->  "&#91;") ::
-      ("\\\\\\]" ->  "&#93;") ::
-      ("\\\\\\(" ->  "&#40;") ::
-      ("\\\\\\)" ->  "&#41;") ::
-      ("\\\\#" ->  "&#35;") ::
-      ("\\\\\\+" ->  "&#43;") ::
-      ("\\\\-" ->  "&#45;") ::
-      ("\\\\\\." ->  "&#46;") ::
-      ("\\\\!" ->  "&#33;") :: Nil
+    ("\\\\`" -> "&#96;") ::
+    ("\\\\_" -> "&#95;") ::
+    ("\\\\>" -> "&gt;") ::
+    ("\\\\\\*" -> "&#42;") ::
+    ("\\\\\\{" -> "&#123;") ::
+    ("\\\\\\}" -> "&#125;") ::
+    ("\\\\\\[" -> "&#91;") ::
+    ("\\\\\\]" -> "&#93;") ::
+    ("\\\\\\(" -> "&#40;") ::
+    ("\\\\\\)" -> "&#41;") ::
+    ("\\\\#" -> "&#35;") ::
+    ("\\\\\\+" -> "&#43;") ::
+    ("\\\\-" -> "&#45;") ::
+    ("\\\\\\." -> "&#46;") ::
+    ("\\\\!" -> "&#33;") :: Nil
   // Reference-style links
   val rRefLinks = Pattern.compile("(\\[(.*?)\\] ?(?:\\n *)?\\[(.*?)\\])")
   // Inline links
   val rInlineLinks = Pattern.compile("\\[(.*?)\\]\\( *<?(.*?)>? *" +
-      "((['\"])(.*?)\\4)?\\)", Pattern.DOTALL)
+    "((['\"])(.*?)\\4)?\\)", Pattern.DOTALL)
   // Autolinks
   val rAutoLinks = Pattern.compile("<((https?|ftp):[^'\">\\s]+)>")
   // Autoemails
@@ -150,14 +162,14 @@ object Markdown {
   val rAmp = Pattern.compile("&amp;(?!#?[xX]?(?:[0-9a-fA-F]+|\\w+);)")
   // SmartyPants
   val smartyPants = (Pattern.compile("(?<=\\s|\\A)(?:\"|&quot;)(?=\\S)") -> leftQuote) ::
-      (Pattern.compile("(?<=[\\w)?!.])(?:\"|&quot;)(?=[.,;?!*)]|\\s|\\Z)") -> rightQuote) ::
-      (Pattern.compile("--") -> dash) ::
-      (Pattern.compile("\\(r\\)", Pattern.CASE_INSENSITIVE) -> reg) ::
-      (Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE) -> copy) ::
-      (Pattern.compile("\\(tm\\)", Pattern.CASE_INSENSITIVE) -> trademark) ::
-      (Pattern.compile("\\.{3}") -> ellipsis) :: 
-      (Pattern.compile("&lt;-|<-") -> leftArrow) :: 
-      (Pattern.compile("-&gt;|->") -> rightArrow) :: Nil
+    (Pattern.compile("(?<=[\\w)?!.])(?:\"|&quot;)(?=[.,;?!*)]|\\s|\\Z)") -> rightQuote) ::
+    (Pattern.compile("--") -> dash) ::
+    (Pattern.compile("\\(r\\)", Pattern.CASE_INSENSITIVE) -> reg) ::
+    (Pattern.compile("\\(c\\)", Pattern.CASE_INSENSITIVE) -> copy) ::
+    (Pattern.compile("\\(tm\\)", Pattern.CASE_INSENSITIVE) -> trademark) ::
+    (Pattern.compile("\\.{3}") -> ellipsis) ::
+    (Pattern.compile("&lt;-|<-") -> leftArrow) ::
+    (Pattern.compile("-&gt;|->") -> rightArrow) :: Nil
   // Markdown inside inline HTML
   val rInlineMd = Pattern.compile("<!--#md-->(.*)<!--~+-->", Pattern.DOTALL)
   // Macro definitions
@@ -175,7 +187,13 @@ object Markdown {
 }
 
 // # Processing Stuff
-case class MacroDefinition(pattern: String, flags: String, replacement: (Matcher)=>String, literally: Boolean) {
+case class MacroDefinition(
+    pattern: String,
+    flags: String,
+    replacement: (Matcher) => String,
+    literally: Boolean
+) {
+
   val regex: Pattern = {
     var f = 0;
     if (flags != null) flags.toList.foreach {
@@ -195,7 +213,10 @@ case class MacroDefinition(pattern: String, flags: String, replacement: (Matcher
 /**
  * We collect all processing logic within this class.
  */
-class MarkdownText(source: CharSequence) {
+class MarkdownText(
+    source: CharSequence
+) {
+
   protected var listLevel = 0
   protected var text = new StringEx(source)
   import Markdown._
@@ -204,7 +225,11 @@ class MarkdownText(source: CharSequence) {
    * Link Definitions
    */
 
-  case class LinkDefinition(val url: String, val title: String) {
+  case class LinkDefinition(
+      val url: String,
+      val title: String
+  ) {
+
     override def toString = url + " (" + title + ")"
   }
 
@@ -221,12 +246,12 @@ class MarkdownText(source: CharSequence) {
    * All unsafe chars are encoded to SGML entities.
    */
   protected def encodeUnsafeChars(code: StringEx): StringEx = code
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll("*", "&#42;")
-      .replaceAll("`", "&#96;")
-      .replaceAll("_", "&#95;")
-      .replaceAll("\\", "&#92;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("*", "&#42;")
+    .replaceAll("`", "&#96;")
+    .replaceAll("_", "&#95;")
+    .replaceAll("\\", "&#92;")
 
   /**
    * All characters escaped with backslash are encoded to corresponding
@@ -240,26 +265,27 @@ class MarkdownText(source: CharSequence) {
    * All unsafe chars are encoded to SGML entities inside code blocks.
    */
   protected def encodeCode(code: StringEx): StringEx = code
-      .replaceAll(rEscAmp, "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
+    .replaceAll(rEscAmp, "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
 
   /**
    * Ampersands and less-than signes are encoded to `&amp;` and `&lt;` respectively.
    */
   protected def encodeAmpsAndLts(text: StringEx) = text
-      .replaceAll(rEscAmp, "&amp;")
-      .replaceAll(rEscLt, "&lt;")
+    .replaceAll(rEscAmp, "&amp;")
+    .replaceAll(rEscLt, "&lt;")
 
   /**
    * Encodes specially-treated characters inside the HTML tags.
    */
   protected def encodeCharsInsideTags(text: StringEx) =
     text.replaceAll(rInsideTags, { m =>
-      val tail = if( m.group(0).endsWith("/>") ) "/>" else ">"
+      val tail = if (m.group(0).endsWith("/>")) "/>" else ">"
       "<" + encodeUnsafeChars(new StringEx(m.group(1)))
-          .replaceAll(rEscAmp, "&amp;")
-          .toString + tail})
+        .replaceAll(rEscAmp, "&amp;")
+        .toString + tail
+    })
 
   // ## Processing methods
 
@@ -271,9 +297,9 @@ class MarkdownText(source: CharSequence) {
    * * reduce all blank lines (i.e. lines containing only spaces) to empty strings.
    */
   protected def normalize(text: StringEx) = text
-      .replaceAll(rLineEnds, "\n")
-      .replaceAll(rTabs, "    ")
-      .replaceAll(rBlankLines, "")
+    .replaceAll(rLineEnds, "\n")
+    .replaceAll(rTabs, "    ")
+    .replaceAll(rBlankLines, "")
 
   /**
    * All inline HTML blocks are hashified, so that no harm is done to their internals.
@@ -288,7 +314,8 @@ class MarkdownText(source: CharSequence) {
       // while closing tags will be captured by $2 leaving $1 empty
       val mTags = text.matcher(Pattern.compile(
         "(<" + tagName + "\\b[^/>]*?>)|(</" + tagName + "\\s*>)",
-        Pattern.CASE_INSENSITIVE))
+        Pattern.CASE_INSENSITIVE
+      ))
       // Find end index of matching closing tag
       var depth = 1
       var idx = m.end
@@ -306,10 +333,10 @@ class MarkdownText(source: CharSequence) {
       // Hashify block
       val key = htmlProtector.addToken(inlineHtml.toString)
       val sb = new StringBuilder(text.subSequence(0, startIdx))
-          .append("\n")
-          .append(key)
-          .append("\n")
-          .append(text.subSequence(endIdx, text.length))
+        .append("\n")
+        .append(key)
+        .append("\n")
+        .append(text.subSequence(endIdx, text.length))
       // Continue recursively until all blocks are processes
       hashHtmlBlocks(new StringEx(sb))
     } else text
@@ -343,7 +370,7 @@ class MarkdownText(source: CharSequence) {
   protected def stripMacroDefinitions(text: StringEx) =
     text.replaceAll(rMacroDefs, m => {
       val replacement = m.group(3)
-      macros ++= List(MacroDefinition(m.group(1), m.group(2), (x)=> replacement, false))
+      macros ++= List(MacroDefinition(m.group(1), m.group(2), (x) => replacement, false))
       ""
     })
 
@@ -357,7 +384,7 @@ class MarkdownText(source: CharSequence) {
     result = doLists(result)
     result = doCodeBlocks(result)
     result = doBlockQuotes(result)
-    result = hashHtmlBlocks(result)    // Again, now hashing our generated markup
+    result = hashHtmlBlocks(result) // Again, now hashing our generated markup
     result = formParagraphs(result)
     return result
   }
@@ -384,7 +411,7 @@ class MarkdownText(source: CharSequence) {
   })
 
   // TODO: handle the dup id case.
-  def to_id(label:String) = " id = \""+label.replaceAll("""[^a-zA-Z0-9\-:]""", "_") + "\""
+  def to_id(label: String) = " id = \"" + label.replaceAll("""[^a-zA-Z0-9\-:]""", "_") + "\""
 
   /**
    * Process horizontal rulers.
@@ -403,9 +430,9 @@ class MarkdownText(source: CharSequence) {
     val pattern = if (listLevel == 0) rList else rSubList
     text.replaceAll(pattern, m => {
       val list = new StringEx(m.group(1))
-          .append("\n")
-          .replaceAll(rParaSplit, "\n\n\n")
-          .replaceAll(rTrailingWS, "\n")
+        .append("\n")
+        .replaceAll(rParaSplit, "\n\n\n")
+        .replaceAll(rTrailingWS, "\n")
       val listType = m.group(2) match {
         case s if s.matches("[*+-]") => "ul"
         case _ => "ol"
@@ -437,11 +464,12 @@ class MarkdownText(source: CharSequence) {
     text.replaceAll(rCodeBlock, m => {
       var langExpr = ""
       val code = encodeCode(new StringEx(m.group(1)))
-          .outdent
-          .replaceAll(rTrailingWS, "")
-          .replaceAll(rCodeLangId, m => {
-        langExpr = " class=\"" + m.group(1) + "\""
-        ""})
+        .outdent
+        .replaceAll(rTrailingWS, "")
+        .replaceAll(rCodeLangId, m => {
+          langExpr = " class=\"" + m.group(1) + "\""
+          ""
+        })
       "<pre" + langExpr + "><code>" + code + "</code></pre>\n\n"
     })
 
@@ -455,7 +483,7 @@ class MarkdownText(source: CharSequence) {
   protected def doBlockQuotes(text: StringEx): StringEx =
     text.replaceAll(rBlockQuote, m => {
       val content = new StringEx(m.group(1))
-          .replaceAll(rBlockQuoteTrims, "")
+        .replaceAll(rBlockQuoteTrims, "")
       "<blockquote>\n" + runBlockGamut(content) + "\n</blockquote>\n\n"
     })
 
@@ -465,10 +493,11 @@ class MarkdownText(source: CharSequence) {
    */
   protected def formParagraphs(text: StringEx): StringEx = new StringEx(
     rParaSplit.split(text.toString.trim)
-        .map(para => htmlProtector.decode(para) match {
-      case Some(d) => d
-      case _ => "<p>" + runSpanGamut(new StringEx(para)).toString + "</p>"
-    }).mkString("\n\n"))
+      .map(para => htmlProtector.decode(para) match {
+        case Some(d) => d
+        case _ => "<p>" + runSpanGamut(new StringEx(para)).toString + "</p>"
+      }).mkString("\n\n")
+  )
 
   /**
    * Span elements are processed within specified `text`.
@@ -530,12 +559,12 @@ class MarkdownText(source: CharSequence) {
     links.get(id) match {
       case Some(ld) =>
         val title = ld.title
-            .replaceAll("\\*", "&#42;")
-            .replaceAll("_", "&#95;")
-            .trim
+          .replaceAll("\\*", "&#42;")
+          .replaceAll("_", "&#95;")
+          .trim
         val url = ld.url
-            .replaceAll("\\*", "&#42;")
-            .replaceAll("_", "&#95;")
+          .replaceAll("\\*", "&#42;")
+          .replaceAll("_", "&#95;")
         val titleAttr = if (title != "") " title=\"" + title + "\"" else ""
         "<a href=\"" + url + "\"" + titleAttr + ">" + linkText + "</a>"
       case _ => wholeMatch
@@ -549,15 +578,15 @@ class MarkdownText(source: CharSequence) {
     text.replaceAll(rInlineLinks, m => {
       val linkText = m.group(1)
       val url = m.group(2)
-          .replaceAll("\\*", "&#42;")
-          .replaceAll("_", "&#95;")
+        .replaceAll("\\*", "&#42;")
+        .replaceAll("_", "&#95;")
       var titleAttr = ""
       var title = m.group(5)
       if (title != null) titleAttr = " title=\"" + title
-          .replaceAll("\\*", "&#42;")
-          .replaceAll("_", "&#95;")
-          .replaceAll("\"", "&quot;")
-          .trim + "\""
+        .replaceAll("\\*", "&#42;")
+        .replaceAll("_", "&#95;")
+        .replaceAll("\"", "&quot;")
+        .trim + "\""
       "<a href=\"" + url + "\"" + titleAttr + ">" + linkText + "</a>"
     })
 
@@ -565,12 +594,12 @@ class MarkdownText(source: CharSequence) {
    * Process autolinks.
    */
   protected def doAutoLinks(text: StringEx): StringEx = text
-      .replaceAll(rAutoLinks, m => "<a href=\"" + m.group(1) + "\">" + m.group(1) + "</a>")
-      .replaceAll(rAutoEmail, m => {
-    val address = m.group(1)
-    val url = "mailto:" + address
-    "<a href=\"" + encodeEmail(url) + "\">" + encodeEmail(address) + "</a>"
-  })
+    .replaceAll(rAutoLinks, m => "<a href=\"" + m.group(1) + "\">" + m.group(1) + "</a>")
+    .replaceAll(rAutoEmail, m => {
+      val address = m.group(1)
+      val url = "mailto:" + address
+      "<a href=\"" + encodeEmail(url) + "\">" + encodeEmail(address) + "</a>"
+    })
 
   /**
    * Process autoemails in anti-bot manner.
@@ -586,20 +615,20 @@ class MarkdownText(source: CharSequence) {
    * Process EMs and STRONGs.
    */
   protected def doEmphasis(text: StringEx): StringEx = text
-      .replaceAll(rStrong, m => "<strong>" + m.group(2) + "</strong>")
-      .replaceAll(rEm, m => "<em>" + m.group(2) + "</em>")
+    .replaceAll(rStrong, m => "<strong>" + m.group(2) + "</strong>")
+    .replaceAll(rEm, m => "<em>" + m.group(2) + "</em>")
 
   /**
    * Process manual linebreaks.
    */
   protected def doLineBreaks(text: StringEx): StringEx = text
-      .replaceAll(rBrs, " <br/>\n")
+    .replaceAll(rBrs, " <br/>\n")
 
   /**
    * Process SmartyPants stuff.
    */
   protected def doSmartyPants(text: StringEx): StringEx =
-    smartyPants.foldLeft(text)((t,p) => t.replaceAll(p._1, p._2))
+    smartyPants.foldLeft(text)((t, p) => t.replaceAll(p._1, p._2))
 
   /**
    * Wrap ampersands with `<span class="amp">`.
@@ -620,7 +649,7 @@ class MarkdownText(source: CharSequence) {
   protected def doToc(text: StringEx): StringEx = {
     text.replaceAllFunc(rToc, m => {
       val (start_level, end_level) = {
-        if (m.group(2)!=null && m.group(3)!=null) {
+        if (m.group(2) != null && m.group(3) != null) {
           (m.group(2).toInt, m.group(3).toInt)
         } else {
           (1, 3)
@@ -654,31 +683,41 @@ object TOC {
   val rHeadings = """<h(\d)(.*?\s+id\s*=\s*("|')(.*?)\3)?.*?>(.*?)</h\1>""".r
 }
 
-class TOC(val start_level:Int, val end_level:Int, val html: String) {
+class TOC(
+    val start_level: Int,
+    val end_level: Int,
+    val html: String
+) {
 
-  case class Heading(level: Int, id: String, body: String) {
+  case class Heading(
+      level: Int,
+      id: String,
+      body: String
+  ) {
+
     def toHtml: String =
       if (id == null) "<span>" + body + "</span>"
       else "<a href=\"#" + id + "\">" + body + "</a>"
     override def toString = toHtml
   }
+
   val headings: Seq[Heading] = TOC.rHeadings.findAllIn(html).matchData.toList
-      .flatMap { m =>
-        if( m.group(4)!=null ) {
-          val h = new Heading(m.group(1).toInt, m.group(4), m.group(5))
-          if( start_level <= h.level && h.level <= end_level ) {
-            Some(h)
-          } else {
-            None
-          }
+    .flatMap { m =>
+      if (m.group(4) != null) {
+        val h = new Heading(m.group(1).toInt, m.group(4), m.group(5))
+        if (start_level <= h.level && h.level <= end_level) {
+          Some(h)
         } else {
           None
         }
-      }.toList
+      } else {
+        None
+      }
+    }.toList
 
   val toHtml: String = if (headings.size == 0) "" else {
     val sb = new StringBuilder
-    def startList(l: Int) = sb.append("  " * (1 + l - start_level) + """<li><ul style="list-style:none;">"""+"\n")
+    def startList(l: Int) = sb.append("  " * (1 + l - start_level) + """<li><ul style="list-style:none;">""" + "\n")
     def endList(l: Int) = sb.append("  " * (l - start_level) + "</ul></li>\n")
     def add(l: Int, h: Heading) = sb.append("  " * (1 + l - start_level) + "<li>" + h.toString + "</li>\n")
     def formList(level: Int, index: Int): Unit = if (index < 0 || index >= headings.size) {
@@ -700,6 +739,7 @@ class TOC(val start_level:Int, val end_level:Int, val html: String) {
       }
     }
     formList(start_level, 0)
-    """<div class="toc"><ul style="list-style:none;">"""+"\n" + sb.toString + "</ul></div>"
+    """<div class="toc"><ul style="list-style:none;">""" + "\n" + sb.toString + "</ul></div>"
   }
+
 }

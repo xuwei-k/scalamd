@@ -4,7 +4,7 @@
 package org.fusesource.scalamd
 
 import java.lang.StringBuilder
-import java.util.regex.{Pattern, Matcher}
+import java.util.regex.{ Pattern, Matcher }
 import Markdown._
 
 // # Character protector
@@ -53,7 +53,9 @@ class Protector {
 /**
  * A simple wrapper over `StringBuilder` with utility methods.
  */
-class StringEx(protected var text: StringBuilder) {
+class StringEx(
+    protected var text: StringBuilder
+) {
 
   def this(source: CharSequence) = this(new StringBuilder(source))
 
@@ -96,7 +98,11 @@ class StringEx(protected var text: StringBuilder) {
     return this
   }
 
-  def replaceAllFunc(pattern: Pattern, replacementFunction: Matcher => CharSequence, literally: Boolean = true): this.type =
+  def replaceAllFunc(
+    pattern: Pattern,
+    replacementFunction: Matcher => CharSequence,
+    literally: Boolean = true
+  ): this.type =
     if (literally)
       replaceAll(pattern, replacementFunction)
     else {
@@ -104,7 +110,11 @@ class StringEx(protected var text: StringBuilder) {
       return this
     }
 
-  def replaceAll(pattern: Pattern, replacement: CharSequence, literally: Boolean = true): this.type =
+  def replaceAll(
+    pattern: Pattern,
+    replacement: CharSequence,
+    literally: Boolean = true
+  ): this.type =
     if (literally) replaceAll(pattern, m => replacement)
     else {
       text = new StringBuilder(pattern.matcher(text).replaceAll(replacement.toString))
@@ -152,4 +162,5 @@ class StringEx(protected var text: StringBuilder) {
    * Emits the content of underlying buffer.
    */
   override def toString = text.toString
+
 }
