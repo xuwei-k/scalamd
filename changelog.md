@@ -1,6 +1,8 @@
 Scala Markdown
 ==============
 
+This documentation is no longer maintained.
+
 [Scala Markdown 1.5](http://scalamd.fusesource.org/maven/1.5), February 7, 2011
 ----
 

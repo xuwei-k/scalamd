@@ -11,7 +11,7 @@ import org.specs2.mutable._
 import org.specs2.matcher.Expectable
 import org.specs2.matcher.Matcher
 
-class MarkdownSpec extends SpecificationWithJUnit {
+class MarkdownSpec extends Specification {
 
   val beFine = new Matcher[String] {
     def apply[S <: String](s: Expectable[S]) = {
