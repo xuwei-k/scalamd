@@ -1,16 +1,15 @@
 lazy val root = (project in file(".")).settings(
   organization := "org.scalatra.scalate",
   name := "scalamd",
-  version := "1.7.0-RC1",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.12.0-RC2", "2.11.8", "2.10.6"),
+  version := "1.7.0",
+  scalaVersion := "2.12.0",
+  crossScalaVersions := Seq("2.12.0", "2.11.8", "2.10.6"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   incOptions := incOptions.value.withNameHashing(true),
   libraryDependencies ++= Seq(
-    "commons-io"   %  "commons-io"   % "1.4"     % Test,
-    "commons-lang" %  "commons-lang" % "2.5"     % Test,
-    "org.specs2"   %% "specs2-core"  % "3.8.5.1" % Test
+    "commons-io"    %  "commons-io"   % "1.4"   % Test,
+    "org.scalatest" %% "scalatest"    % "3.0.0" % Test
   ),
   publishMavenStyle := true,
   pomIncludeRepository := { x => false },
