@@ -1,7 +1,7 @@
 lazy val root = (project in file(".")).settings(
   organization := "org.scalatra.scalate",
   name := "scalamd",
-  version := "1.7.0",
+  version := "1.7.1-SNAPSHOT",
   scalaVersion := "2.12.0",
   crossScalaVersions := Seq("2.12.0", "2.11.8", "2.10.6"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
