@@ -4,18 +4,27 @@
 
 ## Overview
 
-This is a standalone version of the Markdown library originally developed by the 
-Circumflex folks over at `git://github.com/inca/circumflex.git`
+This is a standalone version of the Markdown library originally developed by the Circumflex folks over at `git://github.com/inca/circumflex.git`.
 
 ## Prerequisites
 
-* Java 7 SDK
+* Java 8 SDK
 * sbt 0.13
 * Git
+
+## How to use
+
+http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.scalatra.scalamd%22
+
+```
+libraryDependencies += "org.scalatra.scalate" %% "scalamd" % "1.7.0"
+```
 
 ## Build from sources
 
 Clone the Scala Markdown Library repository:
 
-    git clone git://github.com/scalatra/scalamd.git
-    sbt package
+```
+git clone git://github.com/scalatra/scalamd.git
+sbt package
+```
