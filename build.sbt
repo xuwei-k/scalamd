@@ -10,7 +10,6 @@ lazy val root = (project in file(".")).settings(
   libraryDependencies ++= Seq(
     "commons-io"   %  "commons-io"   % "1.4"     % Test,
     "commons-lang" %  "commons-lang" % "2.5"     % Test,
-    "junit"        %  "junit"        % "4.12"    % Test,
     "org.specs2"   %% "specs2-core"  % "3.8.5.1" % Test
   ),
   publishMavenStyle := true,
