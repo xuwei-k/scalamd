@@ -1,16 +1,25 @@
+val Scala212 = "2.12.6"
+
 lazy val root = (project in file(".")).settings(
   organization := "org.scalatra.scalate",
   name := "scalamd",
   version := "1.7.1-SNAPSHOT",
-  scalaVersion := "2.12.0",
-  crossScalaVersions := Seq("2.12.0", "2.11.8", "2.10.6", "2.13.0-M3"),
+  scalaVersion := Scala212,
+  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0-M4"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   incOptions := incOptions.value.withNameHashing(true),
   libraryDependencies ++= Seq(
-    "commons-io"    %  "commons-io"   % "1.4"      % Test,
-    "org.scalatest" %% "scalatest"    % "3.0.5-M1" % Test
+    "commons-io"    %  "commons-io"   % "1.4"      % Test
   ),
+  libraryDependencies ++= {
+    if (scalaVersion.value == "2.13.0-M4") {
+      // TODO https://github.com/scalatest/scalatest/issues/1367
+      Nil
+    } else {
+      Seq("org.scalatest" %% "scalatest" % "3.0.5-M1" % Test)
+    }
+  },
   publishMavenStyle := true,
   publishTo := sonatypePublishTo.value,
   pomIncludeRepository := { x => false },
