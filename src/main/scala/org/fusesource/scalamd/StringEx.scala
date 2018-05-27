@@ -9,8 +9,7 @@ import java.lang.StringBuilder
  * A simple wrapper over `StringBuilder` with utility methods.
  */
 class StringEx(
-    protected var text: StringBuilder
-) {
+  protected var text: StringBuilder) {
 
   def this(source: CharSequence) = this(new StringBuilder(source))
 
@@ -56,8 +55,7 @@ class StringEx(
   def replaceAllFunc(
     pattern: Pattern,
     replacementFunction: Matcher => CharSequence,
-    literally: Boolean = true
-  ): this.type =
+    literally: Boolean = true): this.type =
     if (literally)
       replaceAll(pattern, replacementFunction)
     else {
@@ -68,8 +66,7 @@ class StringEx(
   def replaceAll(
     pattern: Pattern,
     replacement: CharSequence,
-    literally: Boolean = true
-  ): this.type =
+    literally: Boolean = true): this.type =
     if (literally) replaceAll(pattern, m => replacement)
     else {
       text = new StringBuilder(pattern.matcher(text).replaceAll(replacement.toString))

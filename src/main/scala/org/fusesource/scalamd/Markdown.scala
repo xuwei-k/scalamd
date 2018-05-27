@@ -64,13 +64,11 @@ object Markdown {
   // Start of inline HTML block
   val rInlineHtmlStart = Pattern.compile(
     "^<(" + blockTags.mkString("|") + ")\\b[^/>]*?>",
-    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE
-  )
+    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE)
   // HTML comments
   val rHtmlComment = Pattern.compile(
     "^ {0,3}(<!--.*?-->)\\s*?(?=\\n+|\\Z)",
-    Pattern.MULTILINE | Pattern.DOTALL
-  )
+    Pattern.MULTILINE | Pattern.DOTALL)
   // Link definitions
   val rLinkDefinition = Pattern.compile("^ {0,3}\\[(.+)\\]:" +
     " *\\n? *<?(\\S+)>? *\\n? *" +
@@ -96,8 +94,7 @@ object Markdown {
     ") *$", Pattern.MULTILINE)
   val rHtmlHr = Pattern.compile(
     "^ {0,3}(<hr.*?>)\\s*?$",
-    Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE
-  )
+    Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE)
   // Lists
   val listExpr = "( {0,3}([-+*]|\\d+\\.) +(?s:.+?)" +
     "(?:\\Z|\\n{2,}(?![-+*]|\\s|\\d+\\.)))"
@@ -112,12 +109,10 @@ object Markdown {
   // Block quotes
   val rBlockQuote = Pattern.compile(
     "((?:^ *>(?:.+(?:\\n|\\Z))+\\n*)+)",
-    Pattern.MULTILINE
-  )
+    Pattern.MULTILINE)
   val rBlockQuoteTrims = Pattern.compile(
     "(?:^ *> ?)|(?:^ *$)|(?-m:\\n+$)",
-    Pattern.MULTILINE
-  )
+    Pattern.MULTILINE)
   // Paragraphs splitter
   val rParaSplit = Pattern.compile("\\n{2,}")
   // Code spans

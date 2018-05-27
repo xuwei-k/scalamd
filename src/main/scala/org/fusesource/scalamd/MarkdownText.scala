@@ -9,8 +9,7 @@ import scala.language.existentials
  * We collect all processing logic within this class.
  */
 class MarkdownText(
-    source: CharSequence
-) {
+  source: CharSequence) {
 
   protected var listLevel = 0
   protected var text = new StringEx(source)
@@ -21,9 +20,8 @@ class MarkdownText(
    */
 
   case class LinkDefinition(
-      val url: String,
-      val title: String
-  ) {
+    val url: String,
+    val title: String) {
 
     override def toString = url + " (" + title + ")"
   }
@@ -118,8 +116,7 @@ class MarkdownText(
       // while closing tags will be captured by $2 leaving $1 empty
       val mTags = text.matcher(Pattern.compile(
         "(<" + tagName + "\\b[^/>]*?>)|(</" + tagName + "\\s*>)",
-        Pattern.CASE_INSENSITIVE
-      ))
+        Pattern.CASE_INSENSITIVE))
       // Find end index of matching closing tag
       var depth = 1
       var idx = m.end
@@ -210,16 +207,14 @@ class MarkdownText(
         val id = m.group(3)
         val idAttr = if (id == null) to_id(label.toString) else " id = \"" + id + "\""
         "<h1" + idAttr + ">" + label + "</h1>"
-      }
-    ).replaceAll(
+      }).replaceAll(
         rH2,
         m => {
           val label = runSpanGamut(new StringEx(m.group(1)))
           val id = m.group(3)
           val idAttr = if (id == null) to_id(label.toString) else " id = \"" + id + "\""
           "<h2" + idAttr + ">" + label + "</h2>"
-        }
-      ).replaceAll(
+        }).replaceAll(
           rHeaders,
           m => {
             val marker = m.group(1)
@@ -227,8 +222,7 @@ class MarkdownText(
             val id = m.group(4)
             val idAttr = if (id == null) { to_id(label.toString) } else { " id = \"" + id + "\"" }
             "<h" + marker.length + idAttr + ">" + label + "</h" + marker.length + ">"
-          }
-        )
+          })
   }
 
   // TODO: handle the dup id case.
@@ -316,8 +310,7 @@ class MarkdownText(
       .map(para => htmlProtector.decode(para) match {
         case Some(d) => d
         case _ => "<p>" + runSpanGamut(new StringEx(para)).toString + "</p>"
-      }).mkString("\n\n")
-  )
+      }).mkString("\n\n"))
 
   /**
    * Span elements are processed within specified `text`.
@@ -358,8 +351,7 @@ class MarkdownText(
   protected def doCodeSpans(protector: Protector, text: StringEx): StringEx = {
     text.replaceAll(
       rCodeSpan,
-      m => protector.addToken("<code>" + encodeCode(new StringEx(m.group(2).trim)) + "</code>")
-    )
+      m => protector.addToken("<code>" + encodeCode(new StringEx(m.group(2).trim)) + "</code>"))
   }
 
   /**
