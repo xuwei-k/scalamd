@@ -1,16 +1,14 @@
 package org.fusesource.scalamd
 
 class TOC(
-    val start_level: Int,
-    val end_level: Int,
-    val html: String
-) {
+  val start_level: Int,
+  val end_level: Int,
+  val html: String) {
 
   case class Heading(
-      level: Int,
-      id: String,
-      body: String
-  ) {
+    level: Int,
+    id: String,
+    body: String) {
 
     def toHtml: String = {
       if (id == null) "<span>" + body + "</span>"

@@ -5,11 +5,10 @@ import java.util.regex.{ Matcher, Pattern }
 // # Processing Stuff
 
 case class MacroDefinition(
-    pattern: String,
-    flags: String,
-    replacement: (Matcher) => String,
-    literally: Boolean
-) {
+  pattern: String,
+  flags: String,
+  replacement: (Matcher) => String,
+  literally: Boolean) {
 
   val regex: Pattern = {
     var f = 0

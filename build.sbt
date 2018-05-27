@@ -8,7 +8,6 @@ lazy val root = (project in file(".")).settings(
   crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0-M4"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
-  incOptions := incOptions.value.withNameHashing(true),
   libraryDependencies ++= Seq(
     "commons-io"    %  "commons-io"   % "1.4"      % Test
   ),
@@ -47,4 +46,4 @@ lazy val root = (project in file(".")).settings(
       <url>https://github.com/seratch</url>
     </developer>
   </developers>
-).settings(scalariformSettings)
+)

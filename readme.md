@@ -9,7 +9,7 @@ This is a standalone version of the Markdown library originally developed by the
 ## Prerequisites
 
 * Java 8 SDK
-* sbt 0.13
+* sbt 1.x
 * Git
 
 ## How to use
