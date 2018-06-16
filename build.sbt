@@ -13,8 +13,7 @@ lazy val root = (project in file(".")).settings(
   ),
   libraryDependencies ++= {
     if (scalaVersion.value == "2.13.0-M4") {
-      // TODO https://github.com/scalatest/scalatest/issues/1367
-      Nil
+      Seq("org.scalatest" %% "scalatest" % "3.0.6-SNAP1" % Test)
     } else {
       Seq("org.scalatest" %% "scalatest" % "3.0.5-M1" % Test)
     }
