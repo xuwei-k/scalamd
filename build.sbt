@@ -9,7 +9,7 @@ lazy val root = (project in file(".")).settings(
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   libraryDependencies ++= Seq(
-    "commons-io"    %  "commons-io"   % "1.4"      % Test
+    "commons-io"    %  "commons-io"   % "2.6"      % Test
   ),
   libraryDependencies ++= {
     if (scalaVersion.value == "2.13.0-M5") {
