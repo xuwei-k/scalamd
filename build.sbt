@@ -1,19 +1,24 @@
-val Scala212 = "2.12.6"
+lazy val Scala212 = "2.12.8"
+lazy val scalatestVersion = SettingKey[String]("scalatestVersion")
 
 lazy val root = (project in file(".")).settings(
   organization := "org.scalatra.scalate",
   name := "scalamd",
-  version := "1.7.2-SNAPSHOT",
+  version := "1.7.2",
   scalaVersion := Scala212,
-  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0-M5"),
+  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0-RC1"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
-  libraryDependencies ++= Seq(
-    "commons-io"    %  "commons-io"   % "2.6"      % Test
-  ),
-  libraryDependencies ++= {
-    Seq("org.scalatest" %% "scalatest" % "3.0.6-SNAP4" % Test)
+  scalatestVersion := {
+    scalaVersion.value match {
+      case "2.13.0-RC1" => "3.0.8-RC2"
+      case _ =>            "3.0.5"
+    }
   },
+  libraryDependencies ++= Seq(
+    "commons-io"    %  "commons-io" % "2.6"                  % Test,
+    "org.scalatest" %% "scalatest"  % scalatestVersion.value % Test
+  ),
   publishMavenStyle := true,
   publishTo := sonatypePublishTo.value,
   pomIncludeRepository := { x => false },
