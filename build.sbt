@@ -6,12 +6,12 @@ lazy val root = (project in file(".")).settings(
   name := "scalamd",
   version := "1.7.2",
   scalaVersion := Scala212,
-  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0-RC1"),
+  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0-RC2"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   scalatestVersion := {
     scalaVersion.value match {
-      case "2.13.0-RC1" => "3.0.8-RC2"
+      case "2.13.0-RC2" => "3.1.0-SNAP11"
       case _ =>            "3.0.5"
     }
   },
