@@ -9,21 +9,12 @@ lazy val root = (project in file(".")).settings(
   crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
-  scalatestVersion := {
-    scalaBinaryVersion.value match {
-      case "2.13" => "3.1.0-SNAP12"
-      case _ => "3.0.5"
-    }
-  },
+  scalatestVersion := "3.0.8",
   libraryDependencies ++= Seq(
     "commons-io"    %  "commons-io" % "2.6"                  % Test
   ),
   libraryDependencies += {
-    // TODO https://github.com/scalatest/scalatest/issues/1601
-    if(scalaBinaryVersion.value == "2.13")
-      "org.scalatest" % "scalatest_2.13.0-RC3" % scalatestVersion.value % Test
-    else
-      "org.scalatest" %% "scalatest" % scalatestVersion.value % Test
+    "org.scalatest" %% "scalatest" % scalatestVersion.value % Test
   },
   publishMavenStyle := true,
   publishTo := sonatypePublishTo.value,
