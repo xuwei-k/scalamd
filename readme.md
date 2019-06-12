@@ -14,7 +14,7 @@ This is a standalone version of the Markdown library originally developed by the
 
 ## How to use
 
-https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.scalatra.scalate%22%20scalamd
+https://search.maven.org/search?q=g:org.scalatra.scalate%20scalamd
 
 ```
 libraryDependencies += "org.scalatra.scalate" %% "scalamd" % {latest version}
