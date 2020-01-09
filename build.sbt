@@ -1,4 +1,4 @@
-lazy val Scala212 = "2.12.8"
+lazy val Scala212 = "2.12.10"
 lazy val scalatestVersion = SettingKey[String]("scalatestVersion")
 
 lazy val root = (project in file(".")).settings(
@@ -6,7 +6,7 @@ lazy val root = (project in file(".")).settings(
   name := "scalamd",
   version := "1.7.3",
   scalaVersion := Scala212,
-  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.0"),
+  crossScalaVersions := Seq(Scala212, "2.11.12", "2.10.7", "2.13.1"),
   transitiveClassifiers in Global := Seq(Artifact.SourceClassifier),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
   scalatestVersion := "3.1.0",
