@@ -3,9 +3,10 @@ package org.fusesource.scalamd.test
 import java.io.File
 import org.fusesource.scalamd.Markdown
 import org.apache.commons.io.FileUtils
-import org.scalatest._
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class MarkdownSpec extends WordSpec with Matchers {
+class MarkdownSpec extends AnyWordSpec with Matchers {
 
   def assert(name: String) = {
     val inputFile = new File(getClass.getResource("/" + name + ".text").toURI)
