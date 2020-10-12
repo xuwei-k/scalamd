@@ -1,7 +1,5 @@
 # The Scala Markdown Library
 
-[![Build Status](https://travis-ci.org/scalatra/scalamd.svg?branch=master)](https://travis-ci.org/scalatra/scalamd)
-
 ## Overview
 
 This is a standalone version of the Markdown library originally developed by the Circumflex folks over at `git://github.com/inca/circumflex.git`.
