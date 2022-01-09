@@ -34,7 +34,7 @@ object Markdown {
 
   val chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-  val rnd: Random = new SecureRandom()
+  val rnd: Random = new Random() //SecureRandom()
 
   val blockTags: List[String] = {
     "p" :: "div" :: "h1" :: "h2" :: "h3" :: "h4" :: "h5" :: "h6" ::
